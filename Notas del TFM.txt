@@ -1,0 +1,55 @@
+1- Vale, vamos a hacer la base grande pero con filas:
+	- Guardar todas las bases de los paises pero con el indice de la tabla.
+	- Guardar la base grande con los indices.
+
+	- Cargar la base  grande, ponerla a 0 y modificarla cuando los indices de la tabla del pais y del 
+		total coincidan, hacerlo por cada tabla de pais.
+	- Con esas tablas de paises modificadas, ponerlo en la misma.
+	- Modificar el sistema de tablas para, que cojas la tabla de pais bien.
+
+	Para el peso se usaria la que ya tenemos de TODO, (aunque el peso se podria repensar)
+
+
+2- Entender Tensor Board
+	- De donde sale "copy_loss"
+	- De donde sale "train_loss"
+		Vienen de:
+			tf.summary.scalar('train_loss', train_loss)
+			tf.summary.scalar('copy_loss', copy_loss)
+	
+	- Como podemos ver la función de perdida en prueva y validación.
+		He encontrado la de validación y quitado el minimo, ahora puedo ver y creo que no aprende nada, lo siguiente seria loguearlo o algo, para poder ver cuando mejora o empeora.
+		Lo he logrado con el RMSE!!! Así que lo dejo aquí todo.
+
+
+3- Problema, el training loss.
+
+When an AI model has a huge amount of training loss, it means that the model is not learning the patterns in the training data properly. Here are some things you can do:
+
+	1- Check your data: Ensure that your training data is properly labeled and representative of the problem you are trying to solve. Also, check that your data is not biased and is diverse enough to capture all possible scenarios. 
+	En ello, creando la nueva base de datos y creo que lo de la dependencia no nos da, los datos salen muy eclepticlos, quizás la apertura es muy ecleptica.
+
+	2- Check your model architecture: Ensure that your model architecture is appropriate for the problem you are trying to solve. Sometimes, adding more layers or changing the number of neurons in a layer can improve model performance.
+	Por probar, habria que añadir más capas y bloques.
+	Vale, estoy seguro de que nos faltan capas.
+
+	3- Increase the number of training epochs: Sometimes, the model just needs more time to learn the patterns in the data. Try increasing the number of epochs for training and see if the model performance improves.
+	Este no es el problema.
+
+	4- Try using different optimization algorithms: The choice of optimization algorithm can have a significant impact on model performance. Experiment with different optimization algorithms and see if they lead to better results.
+	El problema me parece de momento demasiado grande como para empezar a pensar en esto.
+
+	5- Use regularization techniques: Regularization techniques such as L1, L2, or dropout can prevent overfitting and improve model performance.
+	No hay overfitting.
+
+	6- Try using pre-trained models: Pre-trained models can significantly speed up the training process and improve model performance.
+	No es posible para este problema.
+
+7- Seek expert advice: If the problem persists, seek the advice of experts in the field who can help you debug and fine-tune your model.
+	Desgraciadamente, soy el experto.
+
+
+
+
+
+

@@ -1,0 +1,38 @@
+Como continuar  el proyecto:
+	-Ver el dia para quedar con el profe. ----
+	-Poner claramente los inputs del modelo, y como los trata antes de entrar en el modelo. ----
+	-Ver cuales son exactamente los inputs del modelo.
+
+	-Ver como puedo meter los datos en la IA del TFM.
+
+
+Comandos  CMD:
+
+cd C:\Users\jccvm\OneDrive\Escritorio\¡MASTER!\TFM\STGCN_IJCAI-18
+
+mainTFM.py --lr 0.01 --n_route 2162 --graph Pesos_TODO_REDUCIDO_limpio.csv
+
+mainTFM.py --normalisation robust --lr 0.01
+
+mainTFM.py --normalisation robust_original --lr 0.01 --graph Pesos_TODO_REDUCIDO.csv --epoch 1
+mainTFM.py --normalisation log_scale --lr 0.02 --graph Pesos_TODO_REDUCIDO.csv --epoch 5
+mainTFM.py --normalisation log_scale --lr 0.002 --graph Pesos_TODO_REDUCIDO.csv --epoch 50
+
+mainTFM.py --normalisation robust --lr 0.02 --graph Pesos_TODO_REDUCIDO_USA.csv --n_route 98
+
+
+# Datos: Datos_TODO_reducido_interpolado_2_Sin_0.csv
+mainTFM.py --normalisation robust --lr 0.02 --graph Pesos_TODO_REDUCIDO_Sin_0.csv --n_route 1960
+mainTFM.py --normalisation log_scale --lr 0.02 --graph Pesos_TODO_REDUCIDO_Sin_0.csv --n_route 1960
+
+
+
+
+Comandos Anaconda:
+
+tensorboard --logdir C:\Users\jccvm\OneDrive\Escritorio\¡MASTER!\TFM\STGCN_IJCAI-18\output\tensorboard\train
+
+tensorboard --logdir
+
+
+
