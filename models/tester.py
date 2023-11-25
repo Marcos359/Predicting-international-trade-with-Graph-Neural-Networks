@@ -43,16 +43,11 @@ def multi_pred(sess, y_pred, seq, batch_size, n_his, n_pred, step_idx, dynamic_b
                             feed_dict={'data_input:0': test_seq, 'keep_prob:0': 1.0})
             
             ############### Control ###############
-            # 50: Es el tamaño de la batch.
-            # Luego son 50 (batch_size) de todas los "bloques" posibles (que para train seria 9112), son las secuencias que pasamos para predecir.
-            # 228: El valor de los radares.
-            # 13: El número de historial, lo que usamos para probar y no predecir en un principio.
-            # Las 13 (n_his) primeras se usan para predecir, pero luego se mueva la ventana para incluir las propias predicciones y luego las predicciones de las predicciones hasta que se predicen los 9 (n_pred) que queremos
-            #print("Input: ", test_seq.shape)
-            #try:
-            #    print("Output: ", pred.shape)
-            #except:
-            #    print("Output auxiliar:", pred)
+            # 50: It is the size of the batch.
+            # 50 (batch_size) of all possible "blocks" (which for train would be 9112), are the sequences that we pass to predict.
+            # 228: The value of the radars.
+            # 13: The number of history, what we use to test and not to predict at first.
+            # The first 13 (n_his) are used to predict, but then move the window to include the predictions themselves and then the predictions of the predictions.
             ############### Control ###############
             
             # ¿Que hace esto?
@@ -63,25 +58,6 @@ def multi_pred(sess, y_pred, seq, batch_size, n_his, n_pred, step_idx, dynamic_b
             test_seq[:, n_his - 1, :, :] = pred
             step_list.append(pred)
         pred_list.append(step_list)
-        
-        ############### Control ############### (9, 50, 228, 1)
-        #print("Predección para la batch: ", np.concatenate(pred_list, axis=1).shape)
-        # Convert array to DataFrame
-        #df_output = pd.DataFrame(np.concatenate(pred_list, axis=1)[:, 0, :, 0])
-        #df_output.to_csv("Output.csv")
-        
-        #with pd.ExcelWriter('Pruevas.xlsx') as writer:
-            # Write DataFrame 1 to Sheet 1
-            #df_input.to_excel(writer, sheet_name='Input', index=False)
-
-            # Write DataFrame 2 to Sheet 2
-        #    df_output.to_excel(writer, sheet_name='Output', index=False)
-
-            # Save the Excel file
-        #    writer.save()
-        ############### Control ###############
-        ############### ERROR DE CONTROL ###############
-        #raise ValueError('Se ha llegado hasta el final!')
         
     #  pred_array -> [n_pred, batch_size, n_route, C_0)
     pred_array = np.concatenate(pred_list, axis=1)
@@ -124,21 +100,16 @@ def multi_pred_TFM(sess, y_pred, seq, batch_size, n_his, n_pred, step_idx, x_sta
         
     #  pred_array -> [n_pred, batch_size, n_route, C_0)
     pred_array = np.concatenate(pred_list, axis=1)
+
+
     
-    ############################# CONTROL #####################################################
-    # Guardar el y_test y el x_test, sucio, muy sucio, pero funcional
-    #### CUIDADO POR DEFECTO SE ASUME QUE USAMOS EL ESCALADO "robust"
-    
-    #pd.DataFrame(seq[0, :,  :, 0]).to_csv("x_test final.csv", index=False)
-    #raise ValueError('Se ha llegado hasta el final!')
-    
+        ############################# SAVING EACH YEARS PREDICTIONS #####################################################
     for x in range(step_idx[0]+1):
         print(x, " and ", step_idx[0]+1)
-        # (3, 16, 2450, 1)
+
         print(seq.shape)
         x_guardar = pd.DataFrame(descale(seq[:, n_his+x, :, 0], x_stats['mean'], x_stats['std'], normalisation))
         x_guardarZ = pd.DataFrame(seq[:, -3+x, :, 0]) # 6-3 --n_his es de 6, el menos 3 es por el espacio!
-        #print(pred_array.shape)
         
         y_guardar = pd.DataFrame(descale(pred_array[x, :, :, 0], x_stats['mean'], x_stats['std'], normalisation))
         y_guardarZ = pd.DataFrame(pred_array[x, :, :, 0])
@@ -225,6 +196,10 @@ def model_test(inputs, batch_size, n_his, n_pred, inf_mode, normalisation, load_
 
         x_test, x_stats = inputs.get_data('test'), inputs.get_stats()
 
+         ############################# SAVING AND CONTROL #####################################################
+        # The evaluation has been rendered useless.
+        # Now to evaluate we compare the results to ARIMA in Jupiter inside "Trials.ipynb"
+        
         y_test, len_test = multi_pred_TFM(test_sess, pred, x_test, batch_size, n_his, n_pred, step_idx, x_stats, normalisation)
         evl = evaluation(x_test[0:len_test, step_idx + n_his, :, :], y_test, x_stats)
         
@@ -232,25 +207,10 @@ def model_test(inputs, batch_size, n_his, n_pred, inf_mode, normalisation, load_
         x_tR = descale(x_test[0, -1, :4, 0], x_stats['mean'], x_stats['std'])
         y_tR = descale(y_test[0, 0, :4, 0], x_stats['mean'], x_stats['std'])
         
-        print("Lo que debia dar de verdad en z!:                    ", x_test[0, -1, :4, 0]) # step_idx + n_his = 15
-        print("Lo que debia dar de verdad! normal:                  ", x_tR)
-        
-        # print("Forma de las predicciones: ", y_test.shape) (1, 1, 2450, 1)
-        
-        print("Lo que ha dado realmente en z!:                      ", y_test[0, 0, :4, 0])
-        print("Lo que debia dar de verdad en numero :               ", y_tR)
-        
-        #evl = evaluation(x_test[0, step_idx + n_his, :4, 0], y_test[0, 0, :4, 0], x_stats)
-        print("Error absluto entre los trozos con 4 en Z:           ", MAE(x_test[0, -1, :4, 0], y_test[0, 0, :4, 0]))
-        print("Error absluto entre los trozos con 4 en numero:      ", MAE(x_tR, y_tR))
-        
-        #print("Error absluto entre los trozos con 1000: ", MAE(x_test[0, step_idx + n_his, :1000, 0], y_test[0, 0, :1000, 0]))
-        #print("Error absluto entre los trozos con 2000: ", MAE(x_test[0, step_idx + n_his, :2000, 0], y_test[0, 0, :2000, 0]))
-        
         x_tR = descale(x_test[0, -1, :, 0], x_stats['mean'], x_stats['std'])
         y_tR = descale(y_test[0, 0, :, 0], x_stats['mean'], x_stats['std'])
-        print("Error absluto entre los trozos con TODO en Z:        ", MAE(x_test[0, step_idx + n_his, :, 0], y_test[0, 0, :, 0]))
-        print("Error absluto entre los trozos con TODO en numero:   ", MAE(x_tR, y_tR))
+        print("Absolute error scaled:        ", MAE(x_test[0, step_idx + n_his, :, 0], y_test[0, 0, :, 0]))
+        print("Absolute error de-scaled:   ", MAE(x_tR, y_tR))
         
 
         
