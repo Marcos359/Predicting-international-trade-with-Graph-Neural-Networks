@@ -76,10 +76,6 @@ def temporal_conv_layer(x, Kt, c_in, c_out, act_func='relu'):
         # Note, _.get_shape() cannot convert a partially known TensorShape to a Tensor.
         x_input = tf.concat([x, tf.zeros([tf.shape(x)[0], T, n, c_out - c_in])], axis=3)
         
-        # LA LÍNEA DE "x_input" NO DA ERROR EN CMD PERO SI EN JÚPITER
-        #print("El tensor de padding: ", tf.zeros([tf.shape(x)[0], T, n, c_out - c_in]))
-        #print("El tensor entero: ", x_input)
-        #raise ValueError(f'ERROR')
     else:
         x_input = x
         
@@ -102,17 +98,15 @@ def temporal_conv_layer(x, Kt, c_in, c_out, act_func='relu'):
         try:
             x_conv = tf.nn.conv2d(x, wt, strides=[1, 1, 1, 1], padding='VALID') + bt
         except:
-            ### Si da error aquí es que el n_his no es lo bastante grande para los bloques que tenemos!!
-            ### O se reduce el número de bloques, o se aumenta n_his!!
+            ### If it gives error here is that the n_his is not big enough for the blocks we have
+            ### Either reduce the number of blocks, or increase n_his
             print("Error! Contolando: ")
             print("Entra: ", x)
             print("El siguiente es: ", wt)
             print("Canales de entrada: ", c_in)
             print("Canales de salida: ", c_in)
             x_conv = tf.nn.conv2d(x, wt, strides=[1, 1, 1, 1], padding='VALID') + bt
-        ######## CONTROL ########
-        #print(1.38)
-        ######## CONTROL ########
+            
         if act_func == 'linear':
             return x_conv
         elif act_func == 'sigmoid':
@@ -173,29 +167,16 @@ def st_conv_block(x, Ks, Kt, channels, scope, keep_prob, act_func='GLU'):
     '''
     c_si, c_t, c_oo = channels
     
-    ######## CONTROL ########
-    #print(1.1)
-    ######## CONTROL ########
     
     with tf.variable_scope(f'stn_block_{scope}_in'):
         x_s = temporal_conv_layer(x, Kt, c_si, c_t, act_func=act_func)
-        
-        ######## CONTROL ########
-        #print(1.2)
-        print("Tamaño de x", x)
-        ######## CONTROL ########
+
+        print("Tamaño de x", x
         
         x_t = spatio_conv_layer(x_s, Ks, c_t, c_t)
     with tf.variable_scope(f'stn_block_{scope}_out'):
-        ######## CONTROL ########
-        #print(1.3)
-        ######## CONTROL ########
         x_o = temporal_conv_layer(x_t, Kt, c_t, c_oo)
     x_ln = layer_norm(x_o, f'layer_norm_{scope}')
-    
-    ######## CONTROL ########
-    #print(1.4)
-    ######## CONTROL ########
     
     return tf.nn.dropout(x_ln, keep_prob)
 
