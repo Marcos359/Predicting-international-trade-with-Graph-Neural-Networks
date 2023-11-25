@@ -20,8 +20,6 @@ def z_score(x, mean, std):
     :param std: float, the value of standard deviation.
     :return: np.ndarray, z-score normalized array.
     '''
-    # return (x - mean) / std
-    ### Cuidado  con el escalado de despues!!
     return ((x - mean) / std)*1
 
 
@@ -33,7 +31,6 @@ def z_inverse(x, mean, std):
     :param std: float, the value of standard deviation.
     :return: np.ndarray, z-score inverse array.
     '''
-    # return x * std + mean
     return (x/1) * std + mean
 
 # OLD METHODS
@@ -102,7 +99,6 @@ def get_column_data(data):
 
 def robust_scale(data, mean, irq):
     '''
-    Aplicar la fórmula de normalización robusta
     :param x: np.ndarray, input array to be normalized.
     :param mean: float, the value of mean.
     :param iqr: float, interquartile range.
@@ -116,13 +112,11 @@ def robust_scale(data, mean, irq):
                 scaled_data[c1, :, c3, c4] = (data[c1, :, c3, c4] - mean[c1, 0, c3, c4]) / irq[c1, 0, c3, c4]
 
     
-    #raise ValueError("Final!!")
     return scaled_data
 
 
 def inverse_robust_scale(scaled_data, mean, iqr):
     '''
-    Aplicar la fórmula de normalización robusta
     :param x: np.ndarray, input array to be normalized.
     :param mean: float, the value of mean.
     :param iqr: float, interquartile range.
@@ -142,13 +136,11 @@ def inverse_robust_scale(scaled_data, mean, iqr):
 
 def robust_scale_original(x, mean, irq):
     '''
-    Aplicar la fórmula de normalización robusta
     :param x: np.ndarray, input array to be normalized.
     :param mean: float, the value of mean.
     :param iqr: float, interquartile range.
     :return: np.ndarray, robust normalized array.
     '''
-    # Aplicar la fórmula de normalización robusta
     scaled_data =  (x - mean) / irq
     
     return scaled_data
@@ -156,32 +148,23 @@ def robust_scale_original(x, mean, irq):
 
 def inverse_robust_scale_original(x, mean, iqr):
     '''
-    Aplicar la fórmula de normalización robusta
     :param x: np.ndarray, input array to be normalized.
     :param mean: float, the value of mean.
     :param iqr: float, interquartile range.
     :return: np.ndarray, robust normalized inversed array.
     '''
-    # Realizar la inversión de la fórmula de normalización robusta
     inv_scaled_data = (x * iqr) + mean
     
     return inv_scaled_data
 
 
-#Cambios:
-    # Meter en Mean parece buena idea
-    # Meter el iqr no está probado!
 def log_scale(x, mean, std):
     '''
-    Aplicar la fórmula de normalización robusta
     :param x: np.ndarray, input array to be normalized.
     :param mean: float, the value of mean.
     :param iqr: float, interquartile range.
     :return: np.ndarray, robust normalized array.
     '''
-    # Aplicar la fórmula de normalización robusta
-    #normalized_data = (np.log1p(x) - mean) / std np.log1p(array) / np.log1p(base)
-    #normalized_data = np.log1p(x)
     normalized_data = np.log1p(x)
     
     return normalized_data
@@ -189,15 +172,11 @@ def log_scale(x, mean, std):
 
 def inverse_log_scale(x, mean, std):
     '''
-    Aplicar la fórmula de normalización robusta
     :param x: np.ndarray, input array to be normalized.
     :param mean: float, the value of mean.
     :param iqr: float, interquartile range.
     :return: np.ndarray, robust normalized inversed array.
     '''
-    # Realizar la inversión de la IQR normalization
-    #inv_normalized_data = (np.expm1(x) * std) + mean
-    #inv_normalized_data = np.expm1(x)
     inv_normalized_data = np.expm1(x)
     
     return inv_normalized_data
@@ -274,7 +253,7 @@ def evaluation(y, y_, x_stats):
         #v = z_inverse(y, x_stats['mean'], x_stats['std'])
         #v_ = z_inverse(y_, x_stats['mean'], x_stats['std'])
         
-        ##### NUEVO USAMOS EL ESCALADO EN VEZ DE EL REAL, PARA MOTIVOS DE TESTING
+        ##### NEW! WE USE THE SCALING INSTEAD OF THE REAL ONE, FOR TESTING PURPOSES.
         v = y
         v_ = y_
         return np.array([MAPE(v, v_), MAE(v, v_), RMSE(v, v_)])
@@ -284,7 +263,6 @@ def evaluation(y, y_, x_stats):
         # y -> [time_step, batch_size, n_route, 1]
         y = np.swapaxes(y, 0, 1)
         # recursively call
-        #print("Numero de predicciones", y_.shape[0])
         for i in range(y_.shape[0]):
             tmp_res = evaluation(y[i], y_[i], x_stats)
             tmp_list.append(tmp_res)
