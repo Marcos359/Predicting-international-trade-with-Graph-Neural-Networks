@@ -31,14 +31,10 @@ def scaled_laplacian(W):
         for j in range(n):
             if (d[i] > 0) and (d[j] > 0):
                 L[i, j] = L[i, j] / np.sqrt(d[i] * d[j])
-                
-    #print("Aquí se para.")
-    # lambda_max \approx 2.0, the largest eigenvalues of L.
-    #print(L.dtype)
+    
     L = L.astype(float)
     
     lambda_max = eigs(L, k=1, which='LR')[0][0].real
-    #print("¿O quizás aquí?")
     return np.mat(2 * L / lambda_max - np.identity(n))
 
 
